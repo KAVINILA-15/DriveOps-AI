@@ -1,0 +1,9 @@
+[build]
+  base = ""
+  publish = "artifacts/driveops-ai/dist/public"
+  command = "pnpm --filter @workspace/driveops-ai build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

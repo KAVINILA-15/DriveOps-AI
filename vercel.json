@@ -1,0 +1,10 @@
+{
+  "buildCommand": "pnpm --filter @workspace/driveops-ai build",
+  "outputDirectory": "artifacts/driveops-ai/dist/public",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -46,7 +46,7 @@
   --secondary: 210 30% 92%;
   --secondary-foreground: 216 40% 15%;
   --muted: 210 28% 93%;
-  --muted-foreground: 215 18% 45%;
+  --muted-foreground: 215 25% 35%;
   --accent: 193 82% 42%;
   --accent-foreground: 0 0% 100%;
   --destructive: 3 68% 48%;
@@ -98,7 +98,15 @@ button { cursor: pointer; }
 .app-shell { min-height: 100dvh; background: linear-gradient(135deg, hsl(var(--background)), hsl(212 34% 94%)); }
 .dark .app-shell { background: hsl(var(--background)); }
 .noise::after { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .025; z-index: 20; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E"); }
-.shell-card { border: 1px solid hsl(var(--border)); background: hsl(var(--card)); box-shadow: var(--shadow-card); border-radius: var(--radius); }
+
+@layer components {
+  .shell-card {
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--card));
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius);
+  }
+}
 .stagger-in { animation: stagger-in .45s ease both; }
 .stagger-2 { animation-delay: .06s; }
 .stagger-3 { animation-delay: .12s; }
