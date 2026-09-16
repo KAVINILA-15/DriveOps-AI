@@ -1,0 +1,884 @@
+Build a complete, polished, modern frontend web application for my project:
+
+PRODUCT NAME:
+DriveOps-AI
+
+PRODUCT TITLE:
+Smart Car Manufacturing & Production Intelligence System
+
+TAGLINE:
+Turning Manufacturing Data into Actionable Intelligence
+
+IMPORTANT:
+This is a college-level product prototype, so the UI must look professional, attractive, modern, and product-ready — NOT like a basic student dashboard.
+
+At the same time, the application must remain very easy for beginner users to understand and operate.
+
+The frontend should be built using React + Vite.
+
+==================================================
+1. CORE PRODUCT IDEA
+==================================================
+
+DriveOps-AI is a smart manufacturing intelligence platform designed for automobile manufacturing environments.
+
+The system works with manufacturing data from:
+
+- Machines
+- Production lines
+- Quality inspections
+
+The backend analyzes this data and identifies:
+
+- Abnormal machine conditions
+- Production performance issues
+- Quality issues
+- Overall manufacturing risk
+
+The system can generate:
+
+- Alerts
+- Manufacturing insights
+- Recommended actions
+
+The frontend should present these results clearly to operators, supervisors, production managers, maintenance teams, and quality teams.
+
+IMPORTANT:
+Do NOT expose backend implementation details such as:
+
+- AI agents
+- Master Agent
+- Machine Monitoring Agent
+- Production Intelligence Agent
+- Quality Intelligence Agent
+- SNS Agent Workbench
+- n8n
+- workflow nodes
+- LLM configuration
+- prompts
+- API implementation
+
+These are backend details.
+
+The frontend should show the RESULT of the intelligence, not the technical implementation.
+
+==================================================
+2. DESIGN DIRECTION
+==================================================
+
+Create a premium industrial-tech SaaS interface.
+
+The design should feel like a combination of:
+
+- Modern manufacturing dashboard
+- AI-powered analytics platform
+- Enterprise SaaS product
+- Automotive technology platform
+
+The application should be visually impressive enough for a college project demonstration and review.
+
+Use:
+
+- Clean modern typography
+- Professional spacing
+- Rounded cards
+- Subtle shadows
+- Attractive charts
+- Status indicators
+- Clear icons
+- Smooth hover effects
+- Micro-interactions
+- Professional navigation
+- Consistent design system
+- Responsive layout
+- Modern dashboard components
+
+Use a professional industrial color palette.
+
+Prefer a light professional interface with dark navy/blue accents and carefully used status colors.
+
+Do NOT make the interface overly colorful.
+
+Do NOT make it look like a generic admin template.
+
+Do NOT overload the screen with too many charts.
+
+The UI should have a clear visual hierarchy.
+
+==================================================
+3. APPLICATION STRUCTURE
+==================================================
+
+Create the following main sections:
+
+1. Dashboard
+2. Upload Dataset
+3. Machine Monitoring
+4. Production Monitoring
+5. Quality Monitoring
+6. Alerts
+7. Insights & Recommendations
+8. Reports
+
+Use a left sidebar navigation.
+
+Top bar should contain:
+
+- DriveOps-AI logo/name
+- Current plant/facility
+- Search
+- Notification icon
+- User profile
+
+Sidebar should clearly highlight the currently selected page.
+
+==================================================
+4. DASHBOARD
+==================================================
+
+Create a visually impressive manufacturing command center.
+
+Header:
+
+"Manufacturing Overview"
+
+Subtitle:
+
+"Monitor production, machine health and quality performance from one place."
+
+At the top show KPI cards:
+
+- Production Output
+- Production Efficiency
+- Quality Rate
+- Active Alerts
+
+Example values can be used for the prototype:
+
+Production Output: 1,248 vehicles
+Efficiency: 91.8%
+Quality Rate: 96.4%
+Active Alerts: 4
+
+Make the cards visually attractive.
+
+Each KPI should have:
+
+- Icon
+- Current value
+- Small description
+- Trend indicator where appropriate
+
+Example:
+
+Production Efficiency
+91.8%
+↑ 2.4% from previous period
+
+==================================================
+5. PRODUCTION OVERVIEW
+==================================================
+
+Show a production performance section.
+
+Display production lines such as:
+
+Line A — Body Assembly
+Line B — Welding
+Line C — Painting
+Line D — Final Assembly
+
+For each line show:
+
+- Target production
+- Actual production
+- Efficiency
+- Status
+
+Use attractive progress bars or compact cards.
+
+Example:
+
+Line A
+Target: 320
+Actual: 312
+Efficiency: 94%
+Status: Normal
+
+Line B
+Target: 330
+Actual: 286
+Efficiency: 87%
+Status: Attention
+
+The user should immediately understand which production line needs attention.
+
+==================================================
+6. MACHINE HEALTH
+==================================================
+
+Create a Machine Health section.
+
+Show:
+
+Total Machines
+48
+
+Healthy
+42
+
+Attention
+4
+
+Critical
+2
+
+Use visual status indicators.
+
+Add a simple machine health chart.
+
+Allow users to click on a machine to see its details.
+
+Machine details should show:
+
+- Machine ID
+- Production line
+- Temperature
+- Vibration
+- Pressure
+- Power consumption
+- Current status
+- Detected issue
+- Recommended action
+
+Example:
+
+Machine:
+WELD-01
+
+Status:
+Attention
+
+Temperature:
+82°C
+
+Vibration:
+4.5
+
+Pressure:
+96
+
+Power:
+12.4 kW
+
+Detected Issue:
+Abnormal vibration pattern
+
+Recommended Action:
+Inspect the machine for possible mechanical issues.
+
+==================================================
+7. QUALITY MONITORING
+==================================================
+
+Create a dedicated Quality Monitoring page.
+
+Show:
+
+- Quality Rate
+- Inspected Vehicles
+- Passed
+- Failed
+- Defect Count
+
+Use a simple chart for defect categories.
+
+Example:
+
+Weld Quality
+Paint Defect
+Assembly Defect
+Surface Defect
+Other
+
+Allow users to understand quality performance without technical knowledge.
+
+==================================================
+8. UPLOAD DATASET
+==================================================
+
+This is one of the MAIN FEATURES.
+
+Create a beautiful dataset upload page.
+
+Title:
+
+"Upload Manufacturing Data"
+
+Subtitle:
+
+"Upload your manufacturing dataset to generate production intelligence."
+
+Provide a large drag-and-drop upload area.
+
+Support CSV files.
+
+Show:
+
+"Drag & drop your CSV file here"
+
+or
+
+"Browse Files"
+
+After upload, display:
+
+- File name
+- File size
+- Number of records
+- Number of columns
+- Upload status
+
+Then provide:
+
+"Analyze Dataset"
+
+button.
+
+IMPORTANT:
+
+The upload experience should be simple.
+
+The user should not need to understand:
+
+- APIs
+- JSON
+- AI agents
+- workflows
+- databases
+- backend processing
+
+==================================================
+9. DATASET PREVIEW
+==================================================
+
+After uploading the CSV, show a clean preview.
+
+Display:
+
+- Number of records
+- Number of columns
+- Detected machine IDs
+- Production lines
+- Data time range
+
+Show the first few rows in a clean table.
+
+Then provide:
+
+"Run Analysis"
+
+button.
+
+==================================================
+10. ANALYSIS STATUS
+==================================================
+
+When the user starts analysis, show a professional processing state.
+
+Example:
+
+Analyzing Manufacturing Data
+
+✓ Data uploaded
+✓ Data validated
+✓ Machine conditions analyzed
+✓ Production performance analyzed
+✓ Quality performance analyzed
+● Generating manufacturing insights
+
+Use a modern progress/status component.
+
+Do NOT expose AI-agent names.
+
+==================================================
+11. ALERTS
+==================================================
+
+Create a dedicated Alerts page.
+
+Show alerts in a clean table/card layout.
+
+Each alert should contain:
+
+- Severity
+- Machine / Production Line
+- Issue
+- Time
+- Status
+- Recommended Action
+
+Example:
+
+HIGH
+WELD-01
+Abnormal vibration detected
+09:30 AM
+Open
+
+Recommended Action:
+Inspect the machine and investigate the abnormal vibration.
+
+Use severity indicators:
+
+Critical
+High
+Medium
+Low
+
+Allow simple filtering:
+
+- All
+- Critical
+- High
+- Medium
+- Resolved
+
+==================================================
+12. INSIGHTS & RECOMMENDATIONS
+==================================================
+
+This is an IMPORTANT feature.
+
+Create a dedicated page called:
+
+"Insights & Recommendations"
+
+The purpose is to answer three simple questions:
+
+1. What happened?
+2. Why does it matter?
+3. What should we do?
+
+Each insight should appear as an attractive card.
+
+Example:
+
+WHAT HAPPENED?
+WELD-01 is showing abnormal vibration and increased temperature.
+
+WHY IT MATTERS
+The machine condition requires attention because abnormal operating conditions may affect production continuity.
+
+RECOMMENDED ACTION
+Inspect WELD-01 and check for possible mechanical issues.
+
+Use simple language.
+
+Recommendations must come from backend analysis whenever backend data is available.
+
+Do NOT hardcode recommendations as the final implementation.
+
+The frontend should be designed to display backend-generated:
+
+- explanation
+- detected issue
+- severity
+- recommended action
+- alert status
+
+==================================================
+13. PRODUCTION INSIGHTS
+==================================================
+
+Add a section showing useful manufacturing insights.
+
+Example:
+
+"Line B is currently below its production target."
+
+"Quality performance is within the expected range."
+
+"WELD-01 requires attention."
+
+Use different insight cards.
+
+Make them easy to scan.
+
+==================================================
+14. REPORTS
+==================================================
+
+Create a simple Reports page.
+
+Do NOT make this complicated.
+
+Show:
+
+- Production summary
+- Machine summary
+- Quality summary
+- Alert summary
+
+Provide:
+
+"Export Report"
+
+button.
+
+The report section can initially use mock/sample data if backend report generation is not yet connected.
+
+==================================================
+15. MACHINE DETAILS
+==================================================
+
+When a user clicks a machine:
+
+Open:
+
+/machines/:id
+
+Show:
+
+Machine Overview
+
+Machine ID
+Production Line
+Status
+
+Performance cards:
+
+Temperature
+Vibration
+Pressure
+Power Consumption
+
+Add simple line charts showing parameter trends.
+
+Then show:
+
+Detected Issues
+
+and
+
+Recommended Action
+
+==================================================
+16. USER EXPERIENCE
+==================================================
+
+The application is intended for beginner users.
+
+Therefore:
+
+- Use simple terminology
+- Avoid technical jargon
+- Use clear labels
+- Use tooltips where useful
+- Use icons with labels
+- Avoid unnecessary configuration
+- Keep important actions obvious
+- Use confirmation messages
+- Use empty states
+- Use loading states
+- Use success/error notifications
+
+For example, instead of:
+
+"Execute AI orchestration pipeline"
+
+use:
+
+"Analyze Dataset"
+
+Instead of:
+
+"Agent execution status"
+
+use:
+
+"Analysis Status"
+
+Instead of:
+
+"LLM Output"
+
+use:
+
+"Manufacturing Insight"
+
+Instead of:
+
+"Agent Recommendation"
+
+use:
+
+"Recommended Action"
+
+==================================================
+17. VISUAL STORY
+==================================================
+
+The entire application should visually communicate:
+
+DATA
+↓
+UNDERSTANDING
+↓
+PROBLEM DETECTION
+↓
+INSIGHT
+↓
+RECOMMENDED ACTION
+
+The user should feel that DriveOps-AI transforms raw manufacturing data into useful decisions.
+
+==================================================
+18. LANDING / WELCOME EXPERIENCE
+==================================================
+
+Create a polished welcome state for the application.
+
+Show:
+
+DriveOps-AI
+
+Smart Car Manufacturing & Production Intelligence
+
+"Turn manufacturing data into actionable intelligence."
+
+Include a primary CTA:
+
+"Upload Manufacturing Data"
+
+and secondary CTA:
+
+"View Dashboard"
+
+Use a subtle automotive/manufacturing visual background or abstract industrial illustration.
+
+Do NOT use random stock images.
+
+==================================================
+19. SAMPLE DATA
+==================================================
+
+Initially provide realistic sample manufacturing data so the interface looks populated during demonstration.
+
+Example data:
+
+Machines:
+
+PRESS-01
+WELD-01
+PAINT-01
+ASSEMBLY-01
+
+Production lines:
+
+Line A
+Line B
+Line C
+Line D
+
+Use realistic-looking values for:
+
+- Temperature
+- Vibration
+- Pressure
+- Power consumption
+- Production target
+- Production actual
+- Quality rate
+- Defect count
+
+Clearly treat these as demo/sample values.
+
+==================================================
+20. BACKEND INTEGRATION
+==================================================
+
+Design the frontend so that it can later connect to my existing backend workflow.
+
+The backend receives manufacturing data and performs:
+
+- Data preparation
+- Machine analysis
+- Production analysis
+- Quality analysis
+- Overall risk assessment
+- Alert generation
+- Recommended action generation
+
+The frontend should consume backend results through APIs.
+
+Create a clean service/API layer in the React project so API integration can be added without rewriting the UI.
+
+DO NOT expose API keys or secrets in frontend code.
+
+Use environment variables for API configuration.
+
+==================================================
+21. IMPORTANT BACKEND RESULT STRUCTURE
+==================================================
+
+The UI should be capable of displaying backend results such as:
+
+{
+  machine_id,
+  production_line,
+  timestamp,
+  machine_status,
+  detected_issues,
+  severity,
+  production_status,
+  production_gap,
+  quality_status,
+  quality_rate,
+  defect_count,
+  overall_status,
+  critical_issues,
+  attention_areas,
+  most_important_issue,
+  explanation,
+  recommended_action,
+  alert_required
+}
+
+Do not assume every field will always be available.
+
+Handle missing fields gracefully.
+
+==================================================
+22. RESPONSIVE DESIGN
+==================================================
+
+Make the application responsive for:
+
+- Desktop
+- Laptop
+- Tablet
+
+The primary demonstration will be on desktop/laptop.
+
+==================================================
+23. UX STATES
+==================================================
+
+Implement:
+
+- Loading states
+- Empty states
+- Error states
+- Success states
+- Upload progress
+- Analysis progress
+- Alert notifications
+- No alerts state
+- No dataset state
+
+Example empty state:
+
+"No manufacturing data available"
+
+"Upload a CSV dataset to start analyzing your manufacturing operations."
+
+Button:
+
+"Upload Dataset"
+
+==================================================
+24. NAVIGATION
+==================================================
+
+Use these routes:
+
+/dashboard
+/upload
+/production
+/machines
+/machines/:id
+/quality
+/alerts
+/insights
+/reports
+
+Make navigation smooth and consistent.
+
+==================================================
+25. PRODUCT QUALITY
+==================================================
+
+The final result must NOT look like a simple CRUD application.
+
+It should look like a real product prototype suitable for:
+
+- College project review
+- Product demonstration
+- Startup-style pitch
+- Manufacturing technology presentation
+
+Focus strongly on:
+
+- UI polish
+- visual hierarchy
+- consistency
+- usability
+- attractive charts
+- meaningful cards
+- professional spacing
+- responsive design
+- smooth interactions
+
+Keep the FEATURES simple.
+
+Make the DESIGN sophisticated.
+
+This distinction is very important:
+
+"SIMPLE TO USE"
+does NOT mean
+"SIMPLE LOOKING."
+
+==================================================
+26. FINAL REQUIREMENT
+==================================================
+
+Build the frontend completely.
+
+Do not stop at wireframes.
+
+Create:
+
+- All pages
+- Navigation
+- Components
+- Charts
+- Cards
+- Tables
+- Upload interface
+- Dataset preview
+- Analysis state
+- Alerts
+- Insights
+- Recommendations
+- Machine details
+- Responsive styling
+- Sample data
+- API service structure
+
+Make the application visually consistent from beginning to end.
+
+The final product should make a reviewer immediately understand:
+
+"What is this?"
+
+"What problem does it solve?"
+
+"What is happening in the factory?"
+
+"Is there a problem?"
+
+"What should the user do?"
+
+without requiring any technical explanation.

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "DriveOps-AI"
+description = "A polished manufacturing intelligence dashboard for monitoring vehicle production, machine health, quality performance, alerts, insights, and reports."
+version = "1.0.0"
+id = "artifacts/driveops-ai"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22486
+
+[services.development]
+run = "pnpm --filter @workspace/driveops-ai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/driveops-ai", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/driveops-ai/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22486"
+BASE_PATH = "/"
