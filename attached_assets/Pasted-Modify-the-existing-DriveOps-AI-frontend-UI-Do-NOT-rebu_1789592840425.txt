@@ -1,0 +1,99 @@
+Modify the existing DriveOps-AI frontend UI. Do NOT rebuild the application from scratch and do NOT change the existing pages, routes, functionality, data, or overall design.
+
+MAIN FIX:
+The left sidebar navigation is currently almost invisible because the inactive navigation text and icons have very low contrast against the background.
+
+Make the LEFT SIDEBAR clearly visible at all times.
+
+Requirements:
+
+1. SIDEBAR VISIBILITY
+- Keep the existing left sidebar in the same position and width.
+- Make the sidebar background clearly distinguishable from the main content area.
+- Use a clean light industrial/SaaS appearance consistent with the current DriveOps-AI design.
+- Do not make it dark unless necessary.
+- Ensure the sidebar has enough contrast so it is immediately noticeable.
+
+2. NAVIGATION ITEMS
+The following navigation items must be clearly readable:
+- Command Center
+- Data Intake
+- Production
+- Machines
+- Quality
+- Alerts
+- Insights
+- Reports
+
+For inactive items:
+- Use a clearly visible medium/dark text color.
+- Icons should also have sufficient contrast.
+- Do NOT use extremely light gray text.
+- Maintain a professional muted appearance, but make every item readable.
+
+3. ACTIVE ITEM
+Keep the current active-page design:
+- Alerts should remain highlighted when the user is on /alerts.
+- Preserve the cyan/blue active background.
+- Keep the alert count badge visible.
+- Active icon and text should have strong contrast.
+
+4. SIDEBAR STRUCTURE
+Keep:
+- DriveOps-AI branding/logo at the top
+- Facility information such as "Northstar Assembly"
+- "Live operations" indicator
+- Navigation sections
+- Existing sidebar collapse/expand behavior if already implemented
+
+5. LAYOUT
+- The sidebar must remain fixed/sticky on the left while the main page content scrolls.
+- It must not disappear behind the main content.
+- Make sure the sidebar has a proper z-index.
+- Prevent the main content from overlapping the sidebar.
+- Maintain the current top header alignment.
+- Do not reduce the sidebar to an icon-only sidebar on desktop.
+
+6. DESKTOP
+For desktop screens:
+- Sidebar should be fully expanded and visible.
+- Navigation labels must always be visible.
+- Use approximately 240–270px sidebar width.
+- Keep comfortable spacing between navigation items.
+- Make the sidebar look intentional and polished.
+
+7. RESPONSIVE BEHAVIOR
+- On smaller screens, the sidebar can collapse into a drawer/mobile navigation.
+- On desktop, it MUST remain visible.
+- Do not let responsive CSS accidentally hide the sidebar on normal laptop/desktop widths.
+
+8. IMPORTANT
+Do not change:
+- Dashboard content
+- Alerts functionality
+- Machine pages
+- Production pages
+- Quality pages
+- Insights
+- Reports
+- API integration
+- Backend integration
+- Demo data
+- Routes
+- Existing typography system
+- Existing color palette
+
+Only improve the sidebar visibility, contrast, positioning, and readability.
+
+9. VISUAL RESULT
+The final UI should look like a professional manufacturing SaaS product:
+- Clearly visible sidebar
+- Strong but elegant contrast
+- Clean spacing
+- Readable navigation
+- Polished icons
+- No washed-out navigation text
+- No overlap with the main content
+
+Most importantly:
+THE SIDEBAR MUST BE CLEARLY VISIBLE ON DESKTOP WITHOUT THE USER HAVING TO HOVER OVER IT.
