@@ -5,6 +5,7 @@
   "scripts": {
     "preinstall": "node -e \"process.exit(0)\"",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "build:vercel": "pnpm --filter @workspace/driveops-ai build && node -e \"require('fs').cpSync('artifacts/driveops-ai/dist/public', 'dist', {recursive: true})\"",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },
