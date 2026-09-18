@@ -23,6 +23,7 @@ import {
 } from '@/services/snsService';
 import { supabaseService } from '@/services/supabaseService';
 import { useManufacturing } from '@/contexts/ManufacturingContext';
+import { formatAlertAction, formatAlertExplanation } from '@/lib/displayFormatters';
 
 function StatusDot({ status }: { status: string }) {
   const color =
@@ -174,8 +175,8 @@ export function UploadPage() {
     <>
       <SectionTitle
         eyebrow="Data intake"
-        title="Bring in a production snapshot"
-        description="Upload a CSV export and DriveOps will evaluate machine signals directly against your SNS Agent Workbench backend."
+        title="Data Intake"
+        description="Upload telemetry CSV to evaluate machine signals via SNS Agent Workbench."
         action={
           <div className="flex items-center gap-2">
             <button
@@ -222,7 +223,7 @@ export function UploadPage() {
                 ? 'Analysis Complete · Verified with SNS Agent Workbench'
                 : file
                 ? file.name
-                : 'Drop a CSV snapshot here'}
+                : 'Drop telemetry CSV snapshot here'}
             </h2>
 
             <p className="mt-2 max-w-sm text-sm font-medium text-slate-600">
@@ -231,8 +232,8 @@ export function UploadPage() {
                     anomalies.length === 1 ? 'anomaly' : 'anomalies'
                   } with ${alertsSent.length} Telegram alert dispatched.`
                 : parsedRows.length > 0
-                ? `Loaded ${parsedRows.length} rows ready for manufacturing intelligence analysis.`
-                : 'Use a CSV line export with timestamps, machine IDs, temperature, vibration, and status.'}
+                ? `${parsedRows.length} telemetry records loaded and ready for analysis.`
+                : 'Upload CSV with machine IDs, temperature, vibration, and status.'}
             </p>
 
             {stage === 'idle' && (
@@ -430,7 +431,7 @@ export function UploadPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 font-bold text-sm text-rose-900">
                       <AlertTriangle size={16} className="text-rose-600" />
-                      <span>{a.machine_id} · Critical Anomaly Detected</span>
+                      <span>{a.machine_id} — Critical Anomaly</span>
                     </div>
                     {a.alert_sent && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-rose-600 px-2.5 py-0.5 text-[10px] font-extrabold text-white">
@@ -450,11 +451,11 @@ export function UploadPage() {
                   </div>
                   <div className="text-slate-800 leading-relaxed font-medium">
                     <span className="font-bold text-rose-900">Explanation: </span>
-                    {a.explanation}
+                    {formatAlertExplanation(a.explanation)}
                   </div>
                   <div className="rounded-lg bg-white/80 p-2 text-[11px] border border-rose-200">
                     <span className="font-bold text-rose-900">Recommended Action: </span>
-                    {a.recommended_action}
+                    {formatAlertAction(a.recommended_action)}
                   </div>
                 </div>
               ))}
