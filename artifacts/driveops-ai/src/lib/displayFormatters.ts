@@ -54,7 +54,7 @@ export function formatAlertTitle(alert: AlertLike | string): string {
     return 'Quality Defect';
   }
 
-  // Handle SNS webhook generated titles: "M-204 Critical Anomaly · Thermal spike (95°C)..."
+  // Handle AI analysis generated titles: "M-204 Critical Anomaly · Thermal spike (95°C)..."
   if (title.includes('Critical Anomaly') || title.includes('Threshold Exceeded')) {
     const idMatch = title.match(/^([A-Za-z0-9_-]+)/);
     const stationId = idMatch ? idMatch[1] : machine || 'Station';
@@ -162,7 +162,7 @@ export function formatAlertExplanation(explanation: string | undefined): string 
     return 'Operating at reduced pace during planned service.';
   }
 
-  // If SNS alert with Telegram notification text appended
+  // If alert with notification text appended
   if (explanation.includes('Recorded temperature')) {
     const tempMatch = explanation.match(/(\d+(?:\.\d+)?°C)/);
     const vibMatch = explanation.match(/(\d+(?:\.\d+)?\s*mm\/s)/);
@@ -206,7 +206,7 @@ export function formatInsightIssue(issue: string | undefined): string {
     return 'Torque Station 12 — Unexpected stop.';
   }
 
-  // SNS format: "M-204 on Body Line A: Anomaly detected..."
+  // Anomaly format: "M-204 on Body Line A: Anomaly detected..."
   if (issue.includes(':')) {
     const parts = issue.split(':');
     const prefix = parts[0].trim();

@@ -54,3 +54,9 @@ Thumbs.db
 *.env
 
 .vercel
+
+# Reports and temporary files
+*.pdf
+scratch/
+test_*.mjs
+test_*.csv

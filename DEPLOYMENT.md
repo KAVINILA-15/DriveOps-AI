@@ -1,32 +1,32 @@
 # DriveOps-AI Deployment Guide
 
-This guide details how to deploy DriveOps-AI with both the **Frontend** and the **Backend Workflow (SNS Agent Workbench + Supabase Cloud)** fully connected.
+This guide details how to deploy DriveOps-AI with both the **Frontend** and the **DriveOps-AI Intelligence Backend** fully connected.
 
 ---
 
 ## 1. Connected Architecture
 
-DriveOps-AI is designed with cloud-native integrations:
+DriveOps-AI operates as a cohesive manufacturing intelligence solution:
 - **Frontend SPA**: React 19 + Vite + TailwindCSS v4 + Wouter
-- **AI Intelligence Backend**: SNS Agent Workbench Workflow (`https://api.agents.snsihub.ai/webhook/smart-manufacturing`)
-  - Evaluates individual machine telemetry
+- **AI Intelligence Backend**: DriveOps-AI Express Backend (`/api`)
+  - Evaluates individual machine telemetry across Machine, Production, and Quality vectors
   - Returns standardized manufacturing analysis JSON
-  - Delivers real-time Telegram alerts
-- **Auth & Database Backend**: Supabase Cloud (`https://csbwlzgmxjdshofhcjkc.supabase.co`)
+  - Generates and stores alerts with automated severity classification
+  - Modular AI LLM integration (Google Gemini / OpenAI)
+- **Auth & Database Backend**: Supabase Cloud (`https://csbwlzgmxjdshofhcjkc.supabase.co`) / PostgreSQL
   - User authentication & session management
   - Machine telemetry & alert persistence
-
-Both backends are fully hosted, active, and accessible over HTTPS.
+  - Resilient local fallback when offline
 
 ---
 
-## 2. Deploy to Vercel (Recommended)
+## 2. Deploy Frontend to Vercel
 
 ### Option A: Via GitHub (Continuous Deployment)
 1. Push your code to your GitHub repository:
    ```bash
    git add .
-   git commit -m "feat: complete DriveOps-AI with SNS Workbench and Supabase integration"
+   git commit -m "feat: complete DriveOps-AI backend migration and frontend connection"
    git push origin main
    ```
 2. Go to [vercel.com/new](https://vercel.com/new) and import your repository.
@@ -40,39 +40,44 @@ Both backends are fully hosted, active, and accessible over HTTPS.
    |---|---|
    | `VITE_SUPABASE_URL` | `https://csbwlzgmxjdshofhcjkc.supabase.co` |
    | `VITE_SUPABASE_ANON_KEY` | `sb_publishable_1Ri7HFtIGynLCPkAQtVB2Q_FjLVLiCx` |
-   | `VITE_SNS_WEBHOOK_URL` | `https://api.agents.snsihub.ai/webhook/smart-manufacturing` |
+   | `VITE_BACKEND_URL` | `https://your-driveops-backend-domain.com` |
 5. Click **Deploy**. Vercel will provision an instant live HTTPS link.
-
-### Option B: Via Vercel CLI
-1. Open PowerShell or Terminal in this folder and run:
-   ```bash
-   npx vercel login
-   ```
-   (Follow the prompt to authenticate in your browser)
-2. Deploy to production:
-   ```bash
-   npx vercel --prod
-   ```
 
 ---
 
-## 3. Alternative: Netlify Drop (Instant Drag & Drop)
+## 3. Deploy Backend (Node.js / Docker / Cloud Run / Railway / Render)
 
-If you need a live production link in under 30 seconds without CLI setup:
-1. Build the production package locally:
-   ```bash
-   npx pnpm --filter @workspace/driveops-ai build
-   ```
-2. Open [app.netlify.com/drop](https://app.netlify.com/drop) in your browser.
-3. Drag and drop the folder:
-   `artifacts/driveops-ai/dist/public`
-4. Netlify will generate a live HTTPS URL immediately with client-side SPA routing already configured.
+The backend is packaged under `backend/` and `artifacts/api-server`.
+
+### Running with Node.js
+```bash
+# Set environment
+export PORT=5000
+export NODE_ENV=production
+export DATABASE_URL="your-postgresql-connection-string"
+export GEMINI_API_KEY="your-gemini-api-key"
+
+# Build and start
+npm run dev:backend
+# Or: node artifacts/api-server/dist/index.mjs
+```
 
 ---
 
 ## 4. Local Production Preview
+
 To verify the compiled production bundle locally:
-```bash
-$env:PORT="4173"; npx pnpm --filter @workspace/driveops-ai serve
-```
-Open: `http://localhost:4173`
+1. Build both frontend and backend:
+   ```bash
+   node artifacts/api-server/build.mjs
+   pnpm --filter @workspace/driveops-ai build
+   ```
+2. Run backend:
+   ```bash
+   $env:PORT="5000"; node artifacts/api-server/dist/index.mjs
+   ```
+3. Run frontend preview:
+   ```bash
+   $env:PORT="4173"; npx pnpm --filter @workspace/driveops-ai serve
+   ```
+   Open `http://localhost:4173`.

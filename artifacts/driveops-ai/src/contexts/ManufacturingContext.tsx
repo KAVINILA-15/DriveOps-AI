@@ -9,7 +9,7 @@ import {
   type Severity,
   type MachineStatus,
 } from '@/lib/driveops-service';
-import type { ManufacturingAnalysisResponse, ManufacturingRecordInput } from '@/services/snsService';
+import { driveopsBackendService, type ManufacturingAnalysisResponse, type ManufacturingRecordInput } from '@/services/backendService';
 
 export interface LineReadinessItem {
   name: string;
@@ -25,26 +25,27 @@ export interface ManufacturingMetrics {
   qualityRate: number;
   openAlertsCount: number;
   criticalAlertsCount: number;
+  total_records?: number;
+  normal_records?: number;
+  anomaly_count?: number;
+  total_defects?: number;
+  dataset_name?: string;
 }
 
-export interface ManufacturingContextType {
+interface ManufacturingContextType {
   machines: Machine[];
   alerts: Alert[];
   insights: Insight[];
   lineReadiness: LineReadinessItem[];
   metrics: ManufacturingMetrics;
   lastSyncTime: string | null;
-  source: 'demo' | 'sns-live';
+  source: 'demo' | 'live';
   latestAnalysis: ManufacturingAnalysisResponse[];
-  applyAnalysisResults: (
-    results: ManufacturingAnalysisResponse[],
-    rawRows?: ManufacturingRecordInput[]
-  ) => void;
-  acknowledgeAlert: (alertId: string) => void;
+  refreshFromBackend: () => Promise<void>;
+  applyAnalysisResults: (results: ManufacturingAnalysisResponse[], rawRows?: ManufacturingRecordInput[]) => void;
+  acknowledgeAlert: (alertId: string) => Promise<void>;
   resetToDefault: () => void;
 }
-
-const STORAGE_KEY = 'driveops_manufacturing_state_v1';
 
 const defaultLineReadiness: LineReadinessItem[] = [
   { name: 'Body Line A', score: '97.4%', machinesReady: '42 / 44', status: 'Healthy' },
@@ -54,13 +55,19 @@ const defaultLineReadiness: LineReadinessItem[] = [
 ];
 
 const defaultMetrics: ManufacturingMetrics = {
-  unitsProduced: 1284,
-  unitsPace: '91 units/hr',
-  productionHealth: 92.6,
-  qualityRate: 98.2,
+  unitsProduced: 4826,
+  unitsPace: '+14/h',
+  productionHealth: 94.2,
+  qualityRate: 98.4,
   openAlertsCount: 3,
   criticalAlertsCount: 1,
+  total_records: 300,
+  normal_records: 283,
+  anomaly_count: 17,
+  total_defects: 12,
 };
+
+const STORAGE_KEY = 'driveops_manufacturing_state_v3';
 
 const ManufacturingContext = createContext<ManufacturingContextType | undefined>(undefined);
 
@@ -118,9 +125,13 @@ export function ManufacturingProvider({ children }: { children: ReactNode }) {
     }
   });
 
-  const [source, setSource] = useState<'demo' | 'sns-live'>(() => {
+  const [source, setSource] = useState<'demo' | 'live'>(() => {
     try {
-      return (localStorage.getItem(`${STORAGE_KEY}_source`) as 'demo' | 'sns-live') || 'demo';
+      const saved = localStorage.getItem(`${STORAGE_KEY}_source`);
+      if (saved === 'live') {
+        return 'live';
+      }
+      return 'demo';
     } catch {
       return 'demo';
     }
@@ -152,174 +163,75 @@ export function ManufacturingProvider({ children }: { children: ReactNode }) {
   }, [machines, alerts, insights, lineReadiness, metrics, lastSyncTime, source, latestAnalysis]);
 
   /**
-   * Apply live SNS Agent Workbench analysis across all system components
+   * Real backend sync: Fetch actual calculated data from the backend API
+   * The backend is the single source of truth for all calculations.
+   */
+  const refreshFromBackend = async () => {
+    try {
+      const data = await driveopsBackendService.fetchDashboard();
+      if (data) {
+        if (data.machines && Array.isArray(data.machines)) {
+          setMachines(data.machines);
+        }
+        if (data.alerts && Array.isArray(data.alerts)) {
+          const mappedAlerts: Alert[] = data.alerts.map((a: any) => ({
+            id: a.alert_id || a.id,
+            machine_id: a.machine_id,
+            machine: `Station ${a.machine_id}`,
+            production_line: a.production_line || 'Body Line A',
+            timestamp: a.timestamp || 'Just now',
+            severity: (a.severity as Severity) || 'Medium',
+            title: a.alert_type || a.title || 'Operational Alert',
+            explanation: a.message || a.explanation || 'Operational threshold exceeded.',
+            recommended_action: a.recommended_action || 'Inspect station immediately.',
+            alert_required: a.severity === 'Critical' || a.severity === 'High',
+            acknowledged: a.status === 'acknowledged',
+          }));
+          setAlerts(mappedAlerts);
+        }
+        if (data.line_readiness && Array.isArray(data.line_readiness)) {
+          setLineReadiness(data.line_readiness);
+        }
+        if (data.insights && Array.isArray(data.insights)) {
+          setInsights(data.insights);
+        }
+        if (data.metrics) {
+          setMetrics(data.metrics);
+        }
+        setSource('live');
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        setLastSyncTime(`Just now · ${timeStr} local (DriveOps-AI Backend)`);
+      }
+    } catch (err) {
+      console.warn('Backend sync deferred (offline or starting up):', err);
+    }
+  };
+
+  // Sync with backend on initial mount
+  useEffect(() => {
+    refreshFromBackend();
+  }, []);
+
+  /**
+   * Apply live DriveOps-AI Backend analysis across all system components
    */
   const applyAnalysisResults = (
     results: ManufacturingAnalysisResponse[],
-    rawRows: ManufacturingRecordInput[] = []
+    _rawRows: ManufacturingRecordInput[] = []
   ) => {
     if (!results || results.length === 0) return;
-
-    const now = new Date();
-    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    const syncTimestamp = `Just now · ${timeStr} local (SNS Backend)`;
-
-    // 1. UPDATE MACHINES FLEET
-    setMachines((prevMachines) => {
-      const updated = [...prevMachines];
-
-      results.forEach((r) => {
-        const existingIdx = updated.findIndex((m) => m.machine_id === r.machine_id);
-        const isAnomaly = Boolean(r.anomaly_detected);
-
-        const newStatus: MachineStatus = isAnomaly
-          ? 'Down'
-          : r.machine_status === 'Attention'
-          ? 'Attention'
-          : 'Running';
-
-        const newOverallStatus: 'Healthy' | 'Watch' | 'At risk' = isAnomaly
-          ? 'At risk'
-          : r.machine_status === 'Attention'
-          ? 'Watch'
-          : 'Healthy';
-
-        const issues = r.abnormal_parameters && r.abnormal_parameters.length > 0
-          ? r.abnormal_parameters
-          : isAnomaly
-          ? [`Thermal spike (${r.temperature}°C)`, `High vibration (${r.vibration} mm/s)`]
-          : [];
-
-        if (existingIdx >= 0) {
-          // Update existing machine
-          updated[existingIdx] = {
-            ...updated[existingIdx],
-            production_line: r.production_line || updated[existingIdx].production_line,
-            machine_status: newStatus,
-            overall_status: newOverallStatus,
-            utilization: isAnomaly ? Math.max(0, updated[existingIdx].utilization - 45) : Math.max(88, updated[existingIdx].utilization),
-            cycle_time: isAnomaly ? 0 : updated[existingIdx].cycle_time || 38.5,
-            runtime: isAnomaly ? '0h 18m (Stopped)' : updated[existingIdx].runtime,
-            detected_issues: issues.length > 0 ? issues : undefined,
-          };
-        } else {
-          // Append new machine dynamically from uploaded dataset
-          updated.push({
-            machine_id: r.machine_id,
-            name: `Station ${r.machine_id}`,
-            production_line: r.production_line || 'Body Line A',
-            machine_status: newStatus,
-            overall_status: newOverallStatus,
-            utilization: isAnomaly ? 32 : 92,
-            quality_rate: 98.4,
-            cycle_time: isAnomaly ? 0 : 39.5,
-            target_cycle_time: 40,
-            runtime: isAnomaly ? '0h 14m' : '19h 40m',
-            last_service: '08 Feb 2024',
-            next_service: '28 Feb 2024',
-            detected_issues: issues.length > 0 ? issues : undefined,
-          });
-        }
-      });
-
-      return updated;
-    });
-
-    // 2. GENERATE NEW ALERTS FROM ANOMALIES
-    const newAlerts: Alert[] = [];
-    results.forEach((r) => {
-      if (r.anomaly_detected) {
-        const severity: Severity =
-          r.severity === 'Critical'
-            ? 'Critical'
-            : r.severity === 'High'
-            ? 'High'
-            : r.severity === 'Medium'
-            ? 'Medium'
-            : 'Critical';
-
-        newAlerts.push({
-          id: `ALT-SNS-${r.machine_id}`,
-          machine_id: r.machine_id,
-          machine: `Station ${r.machine_id}`,
-          production_line: r.production_line || 'Main Line',
-          timestamp: 'Just now · SNS Webhook',
-          severity,
-          title: `${r.machine_id} Critical Anomaly · ${r.abnormal_parameters.join(', ') || 'Threshold Exceeded'}`,
-          explanation: `${r.explanation}${r.alert_sent ? ' (Telegram alert was automatically delivered to floor engineers).' : ''}`,
-          recommended_action: r.recommended_action || 'Inspect station thermal sensors and check mechanical bearings.',
-          alert_required: true,
-          acknowledged: false,
-        });
-      }
-    });
-
-    setAlerts((prevAlerts) => {
-      // Filter out existing alerts with same ID to avoid duplicates
-      const filtered = prevAlerts.filter((a) => !newAlerts.some((na) => na.machine_id === a.machine_id));
-      return [...newAlerts, ...filtered];
-    });
-
-    // 3. GENERATE HIGH PRIORITY INSIGHTS
-    const newInsights: Insight[] = [];
-    const anomalies = results.filter((r) => r.anomaly_detected);
-
-    if (anomalies.length > 0) {
-      anomalies.forEach((a) => {
-        newInsights.push({
-          id: `INS-SNS-${a.machine_id}`,
-          type: 'Maintenance',
-          machine_id: a.machine_id,
-          most_important_issue: `${a.machine_id} on ${a.production_line || 'Assembly'}: ${a.explanation}`,
-          explanation: `${a.explanation} Recorded temperature ${a.temperature}°C with vibration ${a.vibration} mm/s.${a.alert_sent ? ' Automated Telegram notification dispatched.' : ''}`,
-          recommended_action: a.recommended_action || 'Halt station and perform physical verification.',
-          confidence: 96,
-          impact: `${a.machine_id} station halted · Line pace impacted`,
-        });
-      });
-    }
-
-    setInsights((prevInsights) => {
-      if (newInsights.length === 0) return prevInsights;
-      const filtered = prevInsights.filter((pi) => !newInsights.some((ni) => ni.id === pi.id));
-      return [...newInsights, ...filtered];
-    });
-
-    // 4. RECALCULATE LINE READINESS
-    const anomaliesByLine = new Set(anomalies.map((a) => a.production_line).filter(Boolean));
-    setLineReadiness((prevLines) =>
-      prevLines.map((line) => {
-        if (anomaliesByLine.has(line.name)) {
-          return {
-            ...line,
-            score: '84.2%',
-            status: 'At risk',
-          };
-        }
-        return {
-          ...line,
-          status: 'Healthy',
-          score: '98.1%',
-        };
-      })
-    );
-
-    // 5. RECALCULATE OVERALL PRODUCTION METRICS
-    const totalAnomalies = anomalies.length;
-    setMetrics((prev) => ({
-      ...prev,
-      openAlertsCount: prev.openAlertsCount + totalAnomalies,
-      criticalAlertsCount: totalAnomalies,
-      productionHealth: totalAnomalies > 0 ? Math.max(78, 92.6 - totalAnomalies * 6.5) : 94.2,
-      qualityRate: totalAnomalies > 0 ? 96.8 : 98.6,
-    }));
-
-    setLastSyncTime(syncTimestamp);
-    setSource('sns-live');
     setLatestAnalysis(results);
+    setSource('live');
+    refreshFromBackend();
   };
 
-  const acknowledgeAlert = (alertId: string) => {
+  const acknowledgeAlert = async (alertId: string) => {
+    try {
+      await driveopsBackendService.acknowledgeAlert(alertId);
+    } catch (err) {
+      console.warn('Backend acknowledge failed, applying local update:', err);
+    }
     setAlerts((prev) =>
       prev.map((a) => (a.id === alertId ? { ...a, acknowledged: true } : a))
     );
@@ -363,6 +275,7 @@ export function ManufacturingProvider({ children }: { children: ReactNode }) {
         lastSyncTime,
         source,
         latestAnalysis,
+        refreshFromBackend,
         applyAnalysisResults,
         acknowledgeAlert,
         resetToDefault,

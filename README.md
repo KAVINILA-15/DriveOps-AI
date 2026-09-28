@@ -1,6 +1,6 @@
-# DriveOps-AI
+# DriveOps-AI — Smart Car Manufacturing & Production Intelligence
 
-AI-powered manufacturing command center that ingests machine telemetry, evaluates it with an AI agent, and delivers real-time alerts.
+AI-powered manufacturing command center that ingests machine telemetry, analyzes operating parameters through a dedicated intelligence engine, and delivers real-time plant alerts.
 
 **Live demo:** [https://driveops-ai.vercel.app](https://drive-ops-ai-driveops-ai-iw9i.vercel.app/)
 
@@ -8,51 +8,57 @@ AI-powered manufacturing command center that ingests machine telemetry, evaluate
 
 ## Overview
 
-DriveOps-AI is a React single-page application for smart manufacturing operations. Operators can upload or stream machine telemetry (CSV or manual records), have each record evaluated by an AI workflow, and monitor live machine status, production, quality, and alerts across a fleet of stations.
+DriveOps-AI is a high-reliability smart manufacturing operations platform. Operators can upload or stream machine telemetry (JSON or CSV), have each record evaluated by the built-in AI Analysis Engine across Machine Health, Production Performance, and Quality Control, and monitor real-time machine status, line throughput, and alerts.
 
-The system is fully connected to cloud backends:
+The architecture connects the frontend directly to the dedicated **DriveOps-AI Backend**:
 
-- **SNS Agent Workbench workflow** — evaluates individual machine telemetry and returns a standardized manufacturing analysis JSON (`https://api.agents.snsihub.ai/webhook/smart-manufacturing`)
-- **Supabase Cloud** — user authentication, session management, and machine telemetry / alert persistence
-- **Telegram alerts** — real-time notifications triggered by the AI workflow when anomalies are detected
+- **DriveOps-AI Backend** (`/api`) — Node.js & Express service with modular Machine, Production, Quality, and Overall Manufacturing Intelligence engines, automated alert generation, and AI LLM reasoning.
+- **Database Layer** — Supabase Cloud / PostgreSQL persistence for user authentication, machine telemetry, and alert status tracking with resilient in-memory fallback.
+- **Automated Alerts** — Real-time anomaly detection for thermal spikes, excessive vibration, hydraulic pressure drift, and quality excursions.
 
 ## Features
 
-- **Command Center** — fleet-wide dashboard with live metrics, trends, and statuses
-- **Data Intake** — upload machine telemetry as CSV or enter records manually for AI evaluation
-- **Production & Machines** — track lines, stations, cycle quality, and health
-- **Quality & Alerts** — defect tracking, severity-based alerting, and alert acknowledgment
-- **Insights & Reports** — AI-generated analysis with recommended actions
+- **Command Center** — fleet-wide dashboard with live metrics, trends, and line readiness
+- **Data Intake** — upload machine telemetry as CSV or stream JSON records for AI evaluation
+- **Machine Health** — evaluate temperature, vibration, hydraulic pressure, and power consumption
+- **Production Analysis** — monitor target attainment, takt time gaps, and line bottlenecks
+- **Quality Intelligence** — defect tracking, first-pass yield, and severity categorization
+- **Alert Queue** — alert generation, severity tagging (Critical, High, Medium, Low), and acknowledgement
+- **Insights & Reports** — AI-generated root cause analysis with recommended actions and CSV export
 - **Auth** — Supabase-powered sign-in / sign-up with route protection
-- **Fallback resilience** — the app keeps working locally with seed data if Supabase or the AI webhook are unreachable
+- **Resilience** — graceful fallback to local seed data if external databases are offline
 
 ## Tech Stack
 
 - **Frontend:** React 19, Vite 7, TypeScript, Tailwind CSS v4, Wouter
 - **State/Data:** TanStack Query, React Hook Form, Recharts
-- **Backend:** SNS Agent Workbench (AI webhook) + Supabase Cloud
+- **Backend:** Node.js, Express, TypeScript, Drizzle ORM, PostgreSQL / Supabase
 - **Validation:** Zod
-- **Deployment:** Vercel (`vercel.json` build preset)
+- **AI Engine:** Modular AI Reasoning Service (Google Gemini / OpenAI / Deterministic Engineering Engine)
 
 ## Architecture
 
 ```
-Browser (React SPA)
-   ├── Supabase Auth ───────────────► Supabase Cloud (auth, alerts, telemetry)
-   └── Upload/Telemetry ────────────► SNS Agent Workbench webhook
-                                          │  analysis JSON + Telegram alerts
-                                          ▼
-                                  Dashboard / Alerts / Insights
+DriveOps-AI Frontend (React SPA)
+       │
+       ▼
+DriveOps-AI Backend (/api)
+       ├── Machine Intelligence Engine (Thermal, Vibration, Pressure, Power)
+       ├── Production Intelligence Engine (Target vs Actual, Pace, Gaps)
+       ├── Quality Intelligence Engine (Quality Rate, Defect Clustering)
+       ├── Overall Synthesis & AI Layer (Gemini LLM / Engineering Rules)
+       └── Database Adapter (Supabase Cloud / PostgreSQL / Local Store)
+               │
+               ▼
+       Live Fleet Dashboard / Alert Queue / Insights / Shift Reports
 ```
-
-The [DEPLOYMENT.md](./DEPLOYMENT.md) guide describes the connected architecture in detail.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 24+
-- pnpm 10+
+- Node.js 20+ (Node 24/25 supported)
+- pnpm 10+ or npm
 
 ### Install
 
@@ -62,45 +68,69 @@ pnpm install
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` (in `artifacts/driveops-ai/`):
+Copy `.env.example` to `.env`:
 
 ```bash
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-VITE_SNS_WEBHOOK_URL=https://api.agents.snsihub.ai/webhook/smart-manufacturing
+# Backend Settings
+PORT=5000
+NODE_ENV=development
+DATABASE_URL=postgresql://postgres:password@localhost:5432/driveops
+
+# Database (Supabase)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-supabase-anon-key
+
+# Optional Generative AI Reasoning
+GEMINI_API_KEY=your-gemini-api-key
+
+# Frontend Settings
+VITE_BACKEND_URL=http://localhost:5000
 ```
 
-### Run locally
+### Run Locally
+
+1. **Start the DriveOps-AI Backend (port 5000):**
+```bash
+npm run dev:backend
+# or: node artifacts/api-server/build.mjs && node artifacts/api-server/dist/index.mjs
+```
+
+2. **Start the Frontend (port 5173):**
+```bash
+npm run dev:frontend
+# or: pnpm --filter @workspace/driveops-ai run dev
+```
+
+Open `http://localhost:5173` in your browser. In development, Vite automatically proxies `/api` calls to the backend running on port 5000.
+
+### Typecheck & Build
 
 ```bash
-pnpm --filter @workspace/driveops-ai run dev
+pnpm run typecheck   # Typecheck all packages
+pnpm run build       # Build all packages
 ```
-
-The app runs at `http://localhost:5173`.
-
-### Typecheck & build
-
-```bash
-pnpm run typecheck   # typecheck all packages
-pnpm run build       # typecheck + build
-```
-
-## Deploying
-
-The project ships with Vercel and Netlify configuration. See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step instructions (GitHub + Vercel, Vercel CLI, or Netlify Drop).
 
 ## Repository Layout
 
 ```
+backend/                # DriveOps-AI Backend Service
+  analysis/             # Machine, Production, Quality, & Overall Intelligence Engines
+  controllers/          # API route controllers
+  services/             # AI, Alerts, Data, Machine, Production, Quality, Report services
+  database/             # Database client (Supabase / Postgres / Memory Store)
+  models/               # Domain models and TypeScript types
+  routes/               # REST API endpoints (/api/*)
+  utils/                # CSV parser, logger
+  server.ts             # Server entry point
 artifacts/
   driveops-ai/          # React frontend (Vite SPA)
     src/
-      pages/            # Auth, Upload, Settings, 404
-      services/         # snsService, supabaseService, authService
+      pages/            # Dashboard, Upload, Production, Machines, Quality, Alerts, Insights, Reports
+      services/         # backendService, supabaseService, authService
       contexts/         # AuthContext, ManufacturingContext
       components/       # UI + feature components
       lib/              # Supabase client, driveops seed service
-  api-server/           # Express API server (workspace package)
-  mockup-sandbox/       # Design/experimental sandbox
-scripts/                # Shared scripts
+  api-server/           # Backend bundle package for workspace & production deployment
+lib/
+  db/                   # Drizzle ORM schema & Postgres client
 ```

@@ -1,0 +1,16 @@
+{
+  "name": "@workspace/backend",
+  "version": "1.0.0",
+  "description": "DriveOps-AI Manufacturing Intelligence Backend Service",
+  "main": "server.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "node --import tsx server.ts",
+    "start": "node --import tsx server.ts",
+    "build": "echo 'Backend runs directly with Node and tsx'"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1"
+  }
+}

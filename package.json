@@ -5,7 +5,11 @@
   "scripts": {
     "preinstall": "node -e \"process.exit(0)\"",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "build:backend": "node artifacts/api-server/build.mjs",
     "build:vercel": "pnpm --filter @workspace/driveops-ai build && node -e \"require('fs').cpSync('artifacts/driveops-ai/dist/public', 'dist', {recursive: true})\"",
+    "start:backend": "node artifacts/api-server/dist/index.mjs",
+    "dev:backend": "node artifacts/api-server/build.mjs && node artifacts/api-server/dist/index.mjs",
+    "dev:frontend": "pnpm --filter @workspace/driveops-ai run dev",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },

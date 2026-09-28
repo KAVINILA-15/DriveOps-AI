@@ -1,0 +1,286 @@
+{
+  "activeDatasetId": null,
+  "activeDataset": null,
+  "datasets": [],
+  "hashToId": [],
+  "analysisRuns": [],
+  "processedDatasets": [],
+  "rawRecords": [],
+  "machines": [
+    [
+      "M-204",
+      {
+        "machine_id": "M-204",
+        "name": "Press Cell 04",
+        "production_line": "Body Line A",
+        "machine_status": "Attention",
+        "overall_status": "Watch",
+        "utilization": 81,
+        "quality_rate": 97.8,
+        "cycle_time": 42.6,
+        "target_cycle_time": 40,
+        "runtime": "18h 42m",
+        "last_service": "08 Feb 2024",
+        "next_service": "18 Feb 2024",
+        "detected_issues": [
+          "Cycle time drifting",
+          "Hydraulic pressure"
+        ]
+      }
+    ],
+    [
+      "M-117",
+      {
+        "machine_id": "M-117",
+        "name": "Weld Robot 17",
+        "production_line": "Body Line A",
+        "machine_status": "Running",
+        "overall_status": "Healthy",
+        "utilization": 94,
+        "quality_rate": 99.1,
+        "cycle_time": 38.2,
+        "target_cycle_time": 40,
+        "runtime": "22h 08m",
+        "last_service": "30 Jan 2024",
+        "next_service": "22 Feb 2024"
+      }
+    ],
+    [
+      "M-089",
+      {
+        "machine_id": "M-089",
+        "name": "Paint Booth 02",
+        "production_line": "Paint Line C",
+        "machine_status": "Running",
+        "overall_status": "Healthy",
+        "utilization": 88,
+        "quality_rate": 98.7,
+        "cycle_time": 56.1,
+        "target_cycle_time": 58,
+        "runtime": "16h 31m",
+        "last_service": "04 Feb 2024",
+        "next_service": "25 Feb 2024"
+      }
+    ],
+    [
+      "M-312",
+      {
+        "machine_id": "M-312",
+        "name": "Torque Station 12",
+        "production_line": "Final Assembly",
+        "machine_status": "Down",
+        "overall_status": "At risk",
+        "utilization": 0,
+        "quality_rate": 94.2,
+        "cycle_time": 0,
+        "target_cycle_time": 46,
+        "runtime": "0h 19m",
+        "last_service": "12 Jan 2024",
+        "next_service": "12 Feb 2024",
+        "detected_issues": [
+          "Motor temperature high",
+          "Unplanned stop"
+        ]
+      }
+    ],
+    [
+      "M-052",
+      {
+        "machine_id": "M-052",
+        "name": "Sealant Applicator 05",
+        "production_line": "Final Assembly",
+        "machine_status": "Maintenance",
+        "overall_status": "Watch",
+        "utilization": 42,
+        "quality_rate": 96.6,
+        "cycle_time": 49.4,
+        "target_cycle_time": 47,
+        "runtime": "8h 12m",
+        "last_service": "06 Feb 2024",
+        "next_service": "06 Mar 2024",
+        "detected_issues": [
+          "Scheduled maintenance"
+        ]
+      }
+    ],
+    [
+      "M-141",
+      {
+        "machine_id": "M-141",
+        "name": "Vision Inspect 01",
+        "production_line": "Quality Gate",
+        "machine_status": "Running",
+        "overall_status": "Healthy",
+        "utilization": 91,
+        "quality_rate": 99.5,
+        "cycle_time": 22.4,
+        "target_cycle_time": 23,
+        "runtime": "20h 56m",
+        "last_service": "01 Feb 2024",
+        "next_service": "01 Mar 2024"
+      }
+    ],
+    [
+      "M-226",
+      {
+        "machine_id": "M-226",
+        "name": "Laser Marker 06",
+        "production_line": "Final Assembly",
+        "machine_status": "Running",
+        "overall_status": "Healthy",
+        "utilization": 86,
+        "quality_rate": 98.2,
+        "cycle_time": 31.7,
+        "target_cycle_time": 32,
+        "runtime": "19h 10m",
+        "last_service": "05 Feb 2024",
+        "next_service": "05 Mar 2024"
+      }
+    ],
+    [
+      "M-074",
+      {
+        "machine_id": "M-074",
+        "name": "Conveyor Drive 03",
+        "production_line": "Body Line B",
+        "machine_status": "Attention",
+        "overall_status": "Watch",
+        "utilization": 77,
+        "quality_rate": 97.1,
+        "cycle_time": 44.9,
+        "target_cycle_time": 43,
+        "runtime": "14h 34m",
+        "last_service": "28 Jan 2024",
+        "next_service": "14 Feb 2024",
+        "detected_issues": [
+          "Vibration above baseline"
+        ]
+      }
+    ]
+  ],
+  "alerts": [
+    [
+      "ALT-482",
+      {
+        "alert_id": "ALT-482",
+        "machine_id": "M-312",
+        "production_line": "Final Assembly",
+        "timestamp": "8 min ago",
+        "alert_type": "Station stopped unexpectedly",
+        "severity": "Critical",
+        "message": "Motor temperature reached 94°C before the station stopped. Similar readings appeared twice in the last hour.",
+        "recommended_action": "Inspect motor cooling and hold the station for maintenance clearance.",
+        "status": "open"
+      }
+    ],
+    [
+      "ALT-479",
+      {
+        "alert_id": "ALT-479",
+        "machine_id": "M-204",
+        "production_line": "Body Line A",
+        "timestamp": "24 min ago",
+        "alert_type": "Cycle time above target",
+        "severity": "High",
+        "message": "Average cycle time is 42.6 seconds, 6.5% above the line target over the last 90 minutes.",
+        "recommended_action": "Check hydraulic pressure and review the last tooling change.",
+        "status": "open"
+      }
+    ],
+    [
+      "ALT-477",
+      {
+        "alert_id": "ALT-477",
+        "machine_id": "M-074",
+        "production_line": "Body Line B",
+        "timestamp": "41 min ago",
+        "alert_type": "Vibration trend rising",
+        "severity": "Medium",
+        "message": "Vibration is 18% above its seven-day baseline, but the drive is still running within limits.",
+        "recommended_action": "Schedule a bearing inspection during the next planned pause.",
+        "status": "open"
+      }
+    ],
+    [
+      "ALT-468",
+      {
+        "alert_id": "ALT-468",
+        "machine_id": "M-052",
+        "production_line": "Final Assembly",
+        "timestamp": "2h ago",
+        "alert_type": "Maintenance window active",
+        "severity": "Low",
+        "message": "The machine is operating at reduced pace while a planned service task is in progress.",
+        "recommended_action": "Confirm the service checklist before returning to standard pace.",
+        "status": "acknowledged"
+      }
+    ]
+  ],
+  "insights": [
+    [
+      "INS-18",
+      {
+        "id": "INS-18",
+        "type": "Production",
+        "machine_id": "M-204",
+        "most_important_issue": "Body Line A is losing 6–8 minutes per hour at Press Cell 04.",
+        "explanation": "Cycle time has drifted above target after the last tooling change. The drift is isolated to one station, so the line can recover without a full stop.",
+        "recommended_action": "Have a supervisor verify hydraulic pressure and tooling alignment at the next safe handoff.",
+        "confidence": 94,
+        "impact": "Estimated 38 units at risk per shift"
+      }
+    ],
+    [
+      "INS-17",
+      {
+        "id": "INS-17",
+        "type": "Quality",
+        "machine_id": "M-141",
+        "most_important_issue": "Seal alignment defects are clustering around Final Assembly.",
+        "explanation": "Defects are up 2.1 points week over week and are concentrated on the late shift. Vision Inspect 01 is detecting a consistent edge pattern.",
+        "recommended_action": "Review sealant application on M-052 and sample the next 20 units after maintenance release.",
+        "confidence": 88,
+        "impact": "Quality rate could fall below 97%"
+      }
+    ],
+    [
+      "INS-16",
+      {
+        "id": "INS-16",
+        "type": "Maintenance",
+        "machine_id": "M-312",
+        "most_important_issue": "Torque Station 12 requires a controlled restart.",
+        "explanation": "The station stopped after a temperature spike. Repeated temperature rise makes a simple reset unlikely to hold through the next run.",
+        "recommended_action": "Inspect motor cooling, record the root cause, then release the station with a first-piece check.",
+        "confidence": 97,
+        "impact": "Line output paused"
+      }
+    ]
+  ],
+  "lineReadiness": [
+    {
+      "name": "Body Line A",
+      "score": "97.4%",
+      "machinesReady": "42 / 44",
+      "status": "Healthy"
+    },
+    {
+      "name": "Body Line B",
+      "score": "91.8%",
+      "machinesReady": "31 / 35",
+      "status": "Watch"
+    },
+    {
+      "name": "Paint Line C",
+      "score": "98.6%",
+      "machinesReady": "28 / 28",
+      "status": "Healthy"
+    },
+    {
+      "name": "Final Assembly",
+      "score": "86.2%",
+      "machinesReady": "35 / 41",
+      "status": "At risk"
+    }
+  ]
+}
