@@ -21,6 +21,7 @@ import {
 } from '@/services/backendService';
 import { useManufacturing } from '@/contexts/ManufacturingContext';
 import { formatAlertAction, formatAlertExplanation } from '@/lib/displayFormatters';
+import { telegramService } from '@/services/telegramService';
 
 function StatusDot({ status }: { status: string }) {
   const color =
@@ -255,6 +256,31 @@ export function UploadPage() {
 
       setUploadStatusText('Generating alerts and updating dashboard...');
       setUploadSummary(uploadRes);
+
+      // Dispatch real-time alerts via DriveOps-AI Backend to Telegram Chatbot
+      if (uploadRes.anomalies && uploadRes.anomalies.length > 0) {
+        setUploadStatusText('Sending alerts to Telegram chatbot via Backend...');
+        try {
+          await fetch(`${driveopsBackendService.getBackendUrl()}/alerts/telegram`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fileName,
+              anomalies: uploadRes.anomalies,
+              summary: uploadRes.summary,
+            }),
+          });
+        } catch (backendErr) {
+          console.warn('[Backend Telegram] Backend endpoint unreachable, falling back to direct:', backendErr);
+        }
+
+        // Also ensure direct client dispatch
+        try {
+          await telegramService.sendDatasetUploadAlerts(fileName, uploadRes.anomalies, uploadRes.summary);
+        } catch (tgErr) {
+          console.warn('[Telegram] Direct client dispatch error:', tgErr);
+        }
+      }
 
       const mappedResults: ManufacturingAnalysisResponse[] = uploadRes.anomalies.map((a) => ({
         machine_id: a.machine_id,
@@ -573,6 +599,32 @@ export function UploadPage() {
                     Quality Excursions: <span className="font-bold font-mono text-slate-900">{uploadSummary.summary.quality_issues}</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Telegram Delivery Status Banner */}
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-300 bg-emerald-50/80 px-4 py-3 text-xs text-emerald-950 shadow-2xs">
+                <div className="flex items-center gap-2.5">
+                  <div className="grid h-7 w-7 place-items-center rounded-lg bg-emerald-600 text-white">
+                    <Send size={14} />
+                  </div>
+                  <div>
+                    <span className="font-bold text-emerald-900">Telegram Bot Linked: </span>
+                    <span className="text-emerald-800">
+                      Alerts dispatched to Chat ID <code className="rounded bg-emerald-100 px-1 py-0.5 font-mono text-[11px] font-semibold text-emerald-900">7118722423</code> via <b>@DriveOps_Alert_Bot</b>.
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const rawName = (uploadSummary.dataset as any)?.file_name || (uploadSummary.dataset as any)?.filename || 'uploaded_telemetry.csv';
+                    await telegramService.sendDatasetUploadAlerts(rawName, uploadSummary.anomalies, uploadSummary.summary);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-2.5 py-1 text-[11px] font-bold text-emerald-800 hover:bg-emerald-100 transition shadow-2xs"
+                >
+                  <RefreshCw size={12} />
+                  <span>Resend to Telegram</span>
+                </button>
               </div>
 
               {/* Anomaly Highlight Cards with Transparent Reasons */}

@@ -13,4 +13,7 @@ router.post('/alerts', alertController.createAlert);
 router.patch('/alerts/:id/acknowledge', alertController.acknowledgeAlert);
 router.put('/alerts/:id', alertController.acknowledgeAlert);
 
+// Dispatch Telegram alert from backend
+router.post('/alerts/telegram', alertController.dispatchTelegram);
+
 export default router;

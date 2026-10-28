@@ -448,7 +448,7 @@ const STORAGE_KEYS = {
   ALERTS: 'driveops_alerts_client_v3',
 };
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL
+const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BACKEND_URL)
   ? `${import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '')}/api`
   : '/api';
 

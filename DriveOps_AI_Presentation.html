@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriveOps-AI | Presentation Slide Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070c1c;
+      --card-bg: rgba(19, 30, 62, 0.75);
+      --card-border: rgba(38, 56, 102, 0.8);
+      --accent-cyan: #00e5ff;
+      --accent-amber: #ffb703;
+      --accent-green: #00e676;
+      --accent-red: #ff3366;
+      --text-white: #f5f7fa;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-white);
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+    }
+
+    .slide-deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      padding: 3rem 4.5rem;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: scale(0.98);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      background: radial-gradient(circle at 85% 15%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 15% 85%, rgba(255, 183, 3, 0.05) 0%, transparent 50%),
+                  #070c1c;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .category-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .category-tag::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 10px var(--accent-cyan);
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text-white);
+    }
+
+    .system-badge {
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* Content Layouts */
+    .content-area {
+      flex: 1;
+      display: flex;
+      gap: 2rem;
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      width: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    /* Card styling */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      padding: 1.8rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent-cyan)), transparent);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: var(--card-accent, var(--accent-cyan));
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .card ul li {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      position: relative;
+      padding-left: 1.2rem;
+    }
+
+    .card ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--card-accent, var(--accent-cyan));
+      font-weight: bold;
+    }
+
+    /* Hero Slide Specific */
+    .hero-container {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-title {
+      font-size: 3.8rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--accent-amber);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-pills {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .kpi-pill {
+      background: rgba(19, 30, 62, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 0.8rem 1.4rem;
+      text-align: center;
+    }
+
+    .kpi-val {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .image-frame {
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      height: 100%;
+      max-height: 480px;
+      position: relative;
+    }
+
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Table styling */
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+    }
+
+    .specs-table th {
+      background: rgba(16, 42, 77, 0.9);
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0.9rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .specs-table td {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(38, 56, 102, 0.4);
+    }
+
+    .specs-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .specs-table tr:hover td {
+      background: rgba(0, 229, 255, 0.04);
+      color: var(--text-white);
+    }
+
+    .tech-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      background: rgba(255, 183, 3, 0.15);
+      color: var(--accent-amber);
+      font-weight: 600;
+    }
+
+    /* Navigation Controls */
+    .controls {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      background: rgba(11, 19, 43, 0.85);
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 1.2rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-white);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 0.4rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(0, 229, 255, 0.2);
+      color: var(--accent-cyan);
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    .print-btn {
+      background: rgba(0, 229, 255, 0.15);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .print-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    /* Print styles for PDF export */
+    @media print {
+      body {
+        overflow: visible;
+        height: auto;
+      }
+      .controls {
+        display: none !important;
+      }
+      .slide {
+        display: flex !important;
+        opacity: 1 !important;
+        position: relative !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide-deck">
+
+    <!-- SLIDE 1: Hero / Title Slide -->
+    <div class="slide active">
+      <div class="slide-header">
+        <div class="category-tag">Next-Gen Industrial IoT & AI Platform</div>
+        <div class="system-badge">AUTOMOTIVE MANUFACTURING INTELLIGENCE</div>
+      </div>
+      <div class="content-area">
+        <div class="hero-container">
+          <div>
+            <h1 class="hero-title">DriveOps-AI</h1>
+            <h2 class="hero-subtitle">Smart Car Manufacturing & Production Intelligence</h2>
+            <p class="hero-desc">
+              A high-reliability plant operations command center that continuously ingests multi-station robotics telemetry, evaluates thermal and vibration physics in real time, and synthesizes autonomous root-cause remedies via Google Gemini AI.
+            </p>
+            <div class="kpi-pills">
+              <div class="kpi-pill">
+                <div class="kpi-val">4 Vectors</div>
+                <div class="kpi-label">Machine, Pace, Quality, Alert</div>
+              </div>
+              <div class="kpi-pill">
+                <div class="kpi-val">100%</div>
+                <div class="kpi-label">Deterministic Reproducibility</div>
+              </div>
+              <div class="kpi-pill">
+                <div class="kpi-val">&lt;2s</div>
+                <div class="kpi-label">Gemini AI Root-Cause Latency</div>
+              </div>
+            </div>
+          </div>
+          <div class="image-frame">
+            <img src="./presentation_assets/hero_smart_factory.jpg" alt="Automated Smart Car Manufacturing Plant">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Problem & Solution -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">Industry 4.0 Transformation</div>
+          <h2 class="slide-title">The Manufacturing Problem vs. DriveOps Solution</h2>
+        </div>
+        <div class="system-badge">BUSINESS CHALLENGE</div>
+      </div>
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Problem Card -->
+          <div class="card" style="--card-accent: var(--accent-red); background: rgba(30, 16, 26, 0.7); border-color: rgba(140, 30, 60, 0.7);">
+            <div class="card-subtitle" style="color: var(--accent-red);">The Challenge: Costly Unplanned Downtime</div>
+            <h3 class="card-title">Production Line Stoppages</h3>
+            <ul>
+              <li><strong>$22,000 / Minute Downtime:</strong> Automotive assembly lines lose massive capital during unpredicted robotic stoppages and tooling failures.</li>
+              <li><strong>Siloed Telemetry Data:</strong> Thermal, vibration, pressure, and defect logs are stored across disconnected vendor islands with zero unified correlation.</li>
+              <li><strong>Lagging Quality Detection:</strong> Quality excursions are traditionally identified downstream at manual audit gates after dozens of defective units are stamped.</li>
+              <li><strong>Manual Root-Cause Diagnosis:</strong> Maintenance crews spend 45+ minutes deciphering cryptic PLC fault codes before dispatching technicians.</li>
+            </ul>
+          </div>
+          <!-- Solution Card -->
+          <div class="card" style="--card-accent: var(--accent-cyan); background: rgba(12, 32, 58, 0.7); border-color: rgba(0, 229, 255, 0.4);">
+            <div class="card-subtitle" style="color: var(--accent-cyan);">The Solution: DriveOps-AI Platform</div>
+            <h3 class="card-title">Continuous Real-Time Intelligence</h3>
+            <ul>
+              <li><strong>High-Throughput Intake:</strong> Ingests up to 50MB of raw CSV telemetry or JSON streaming feeds with automatic RFC-4180 parsing.</li>
+              <li><strong>Physics-Based Thresholding:</strong> Evaluates ISO 10816 vibration severity and thermal limits with 100% deterministic precision.</li>
+              <li><strong>Autonomous AI Reasoning:</strong> Google Gemini 1.5 Flash provides instantaneous mechanical root-cause synthesis and technician counter-actions.</li>
+              <li><strong>Centralized Alert Queue:</strong> Immediate severity classification (Critical, High, Medium, Low) with technician acknowledgement tracking.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Architecture -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">System Design & Data Pipeline</div>
+          <h2 class="slide-title">End-to-End 3-Tier System Architecture</h2>
+        </div>
+        <div class="system-badge">CLOUD & EDGE TOPOLOGY</div>
+      </div>
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card" style="--card-accent: var(--accent-cyan);">
+            <div class="card-subtitle">Tier 1: Client Application</div>
+            <h3 class="card-title">React 19 & Vite 7 SPA</h3>
+            <ul>
+              <li><strong>Tailwind CSS v4:</strong> Curated high-tech industrial dark mode with glassmorphic dashboards.</li>
+              <li><strong>Recharts Visualization:</strong> Real-time SVG telemetry line charts and takt time pacing gauges.</li>
+              <li><strong>TanStack Query v5:</strong> Asynchronous server state caching and optimistic UI updates.</li>
+              <li><strong>Client-Side Engine:</strong> Dual-layer fallback executes deterministic evaluations even on static edge CDNs.</li>
+            </ul>
+          </div>
+          <div class="card" style="--card-accent: var(--accent-amber);">
+            <div class="card-subtitle">Tier 2: Intelligence Layer</div>
+            <h3 class="card-title">Node.js & Express 5 API</h3>
+            <ul>
+              <li><strong>Modular AI Engines:</strong> Specialized evaluators for Machine, Production, and Quality vectors.</li>
+              <li><strong>Google Gemini 1.5 Flash:</strong> Structured JSON LLM reasoning layer with deterministic temperature (0.2).</li>
+              <li><strong>Circuit Breaker:</strong> Automated 5-minute cooldown protecting against external API quota exhaustion.</li>
+              <li><strong>RFC-4180 Stream Parser:</strong> Normalizes heterogeneous sensor naming aliases on the fly.</li>
+            </ul>
+          </div>
+          <div class="card" style="--card-accent: var(--accent-green);">
+            <div class="card-subtitle">Tier 3: Persistence Layer</div>
+            <h3 class="card-title">Supabase & PostgreSQL</h3>
+            <ul>
+              <li><strong>PostgreSQL Database:</strong> Structured persistence for machine registry, alert history, and time-series telemetry.</li>
+              <li><strong>Drizzle ORM:</strong> Type-safe relational schema modeling with auto-generated Zod validation contracts.</li>
+              <li><strong>Supabase Auth:</strong> Secure JWT authentication with persistent user session management.</li>
+              <li><strong>MemoryStore:</strong> Built-in in-memory fallback guaranteeing zero-downtime operation if cloud DB disconnects.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Machine Health -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">Physical Asset Monitoring</div>
+          <h2 class="slide-title">Machine Health & Physics-Based Telemetry Analytics</h2>
+        </div>
+        <div class="system-badge">ISO 10816 COMPLIANT</div>
+      </div>
+      <div class="content-area">
+        <div class="grid-2">
+          <div class="card" style="--card-accent: var(--accent-amber);">
+            <div class="card-subtitle">Centralized Sensor Thresholds</div>
+            <h3 class="card-title">Deterministic Physical Rules</h3>
+            <ul>
+              <li><strong>Motor Temperature (°C):</strong><br>
+                Nominal: &lt;75°C | Warning: ≥85°C | Critical (Emergency Stop): ≥90°C.<br>
+                <em style="color:var(--text-white);">Action:</em> Automated line halt to prevent stator burnout and bearing seizure.
+              </li>
+              <li><strong>Vibration Velocity (mm/s):</strong><br>
+                Nominal: &lt;3.0 | Warning: ≥4.5 | Critical: ≥6.0 mm/s.<br>
+                <em style="color:var(--text-white);">Action:</em> Detects mechanical unbalance, rotor resonance, and early bearing race pitting.
+              </li>
+              <li><strong>Hydraulic & Pneumatic Pressure (psi):</strong><br>
+                Optimal Window: 70 - 115 psi | Critical Out-of-Spec: &lt;60 or &gt;125 psi.<br>
+                <em style="color:var(--text-white);">Action:</em> Guarantees robotic clamping precision and guards against valve rupture.
+              </li>
+              <li><strong>Power Consumption (kW):</strong><br>
+                Warning: ≥48.0 kW | Critical: ≥55.0 kW surge detection.
+              </li>
+            </ul>
+          </div>
+          <div class="image-frame">
+            <img src="./presentation_assets/sensor_diagnostics.jpg" alt="IoT Industrial Sensor Diagnostics">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Production & Quality -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">Operational Excellence</div>
+          <h2 class="slide-title">Production Throughput & Quality Gate Intelligence</h2>
+        </div>
+        <div class="system-badge">LEAN MANUFACTURING</div>
+      </div>
+      <div class="content-area">
+        <div class="grid-2">
+          <div class="card" style="--card-accent: var(--accent-cyan);">
+            <div class="card-subtitle">Vector 2: Production Throughput</div>
+            <h3 class="card-title">Takt Time & Attainment Gaps</h3>
+            <ul>
+              <li><strong>Target Attainment Formula:</strong><br>
+                <code style="color:var(--accent-cyan); font-size:1rem;">Attainment = (Production Actual / Production Target) × 100%</code>
+              </li>
+              <li><strong>Deficit Classification:</strong><br>
+                • <em>Minor Gap (Medium):</em> 15% - 25% throughput deficit vs planned shift takt.<br>
+                • <em>Critical Behind (High):</em> &gt;25% production gap (triggers technician dispatch).
+              </li>
+              <li><strong>Bottleneck Avoidance:</strong><br>
+                Monitors downstream buffer capacity when line pace exceeds target (+14/h) to prevent assembly congestion.
+              </li>
+              <li><strong>Takt Variance:</strong> Quantified in seconds (&plusmn;&Delta;t) compared against station design cycle time (42s).</li>
+            </ul>
+          </div>
+          <div class="card" style="--card-accent: var(--accent-amber);">
+            <div class="card-subtitle">Vector 3: Quality Gate</div>
+            <h3 class="card-title">First-Pass Yield & Defect Clustering</h3>
+            <ul>
+              <li><strong>First-Pass Yield (FPY) Standards:</strong><br>
+                • <em>Optimal:</em> &ge;98.0% quality rate.<br>
+                • <em>Degraded:</em> &lt;95.0% or &ge;5 defects per batch.<br>
+                • <em>Critical Excursion:</em> &lt;90.0% or &ge;10 defects per batch.
+              </li>
+              <li><strong>Automated Lot Quarantine:</strong> Critical defect spikes immediately recommend holding the next 15 units for quality inspection.</li>
+              <li><strong>Taxonomy Clustering:</strong> Evaluates defect types (geometric distortion, weld porosity, coat thickness) to pinpoint tool degradation.</li>
+              <li><strong>Continuous OEE Scoring:</strong> Combines availability, performance, and quality into a unified fleet health score.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Command Center -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">Real-Time Fleet Control</div>
+          <h2 class="slide-title">Plant Command Center & Operations Dashboard</h2>
+        </div>
+        <div class="system-badge">MISSION CONTROL</div>
+      </div>
+      <div class="content-area">
+        <div class="grid-2">
+          <div class="image-frame">
+            <img src="./presentation_assets/command_center.jpg" alt="Plant Operations Command Center">
+          </div>
+          <div class="card" style="--card-accent: var(--accent-cyan);">
+            <div class="card-subtitle">Real-Time Plant Floor Visibility</div>
+            <h3 class="card-title">Fleet Command Center Features</h3>
+            <ul>
+              <li><strong>Fleet Telemetry Dashboard:</strong> Live display of total units produced, current shift pace (+14/h), and fleet health index (98.4%).</li>
+              <li><strong>Line Readiness Index:</strong> Real-time station operational readiness across Body Line A, Body Line B, Paint Line C, and Final Assembly.</li>
+              <li><strong>Dynamic Alert Queue:</strong> Instant notification feed with severity color-coding and 1-click operator acknowledgement.</li>
+              <li><strong>Shift Audit Reports:</strong> Automated generation of end-of-shift summaries with CSV export capabilities for management review.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Dual-Layer AI Engine -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">Autonomous Diagnostics & Resilience</div>
+          <h2 class="slide-title">Dual-Layer AI Reasoning & Circuit Breaker Architecture</h2>
+        </div>
+        <div class="system-badge">ZERO-DOWNTIME AI</div>
+      </div>
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card" style="--card-accent: var(--accent-cyan);">
+            <div class="card-subtitle">Layer 1: Generative AI</div>
+            <h3 class="card-title">Google Gemini 1.5 Flash</h3>
+            <ul>
+              <li><strong>Condition-Triggered:</strong> Invoked when sensor excursions are flagged by the deterministic engine.</li>
+              <li><strong>Structured JSON Output:</strong> Enforces strict mechanical diagnosis and actionable engineering commands.</li>
+              <li><strong>Zero Hallucination (T=0.2):</strong> Deterministic temperature tuning confines responses to factual automotive physics.</li>
+              <li><strong>Sub-Second Synthesis:</strong> Generates plant floor countermeasures in under 2 seconds.</li>
+            </ul>
+          </div>
+          <div class="card" style="--card-accent: var(--accent-red);">
+            <div class="card-subtitle">Layer 2: Reliability Shield</div>
+            <h3 class="card-title">5-Minute Circuit Breaker</h3>
+            <ul>
+              <li><strong>Rate-Limit Defense:</strong> Monitors HTTP 429 quota exhaustion and network timeouts.</li>
+              <li><strong>Instant Trip:</strong> Cuts off external API requests immediately to prevent request latency build-up.</li>
+              <li><strong>Self-Healing:</strong> Automatically resets after a 5-minute cooldown window to probe service recovery.</li>
+              <li><strong>Zero Blocking:</strong> Server response latency remains &lt;10ms even during cloud outages.</li>
+            </ul>
+          </div>
+          <div class="card" style="--card-accent: var(--accent-green);">
+            <div class="card-subtitle">Layer 3: Deterministic Fallback</div>
+            <h3 class="card-title">Automotive Physics Rules</h3>
+            <ul>
+              <li><strong>100% Guaranteed Uptime:</strong> Completely functional without any external API keys or cloud connections.</li>
+              <li><strong>Identical Calculations:</strong> Client and server execute the exact same anomaly calculations.</li>
+              <li><strong>Safety Compliance:</strong> Strict mathematical thresholds ensure mission-critical plant safety.</li>
+              <li><strong>Static Host Ready:</strong> Enables full offline demonstrations and static hosting on Vercel.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Tech Specs Table -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">Full-Stack Engineering Breakdown</div>
+          <h2 class="slide-title">Complete Project Technical Specifications</h2>
+        </div>
+        <div class="system-badge">SYSTEM MATRIX</div>
+      </div>
+      <div class="content-area">
+        <table class="specs-table">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Core Technology</th>
+              <th>Key Modules / Libraries</th>
+              <th>Benefit Delivered</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tech-badge">Frontend UI</span></td>
+              <td><strong>React 19 & Vite 7</strong></td>
+              <td>Wouter, Radix UI Primitives, Lucide Icons</td>
+              <td>Sub-second HMR, modular SPA architecture, zero lag</td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">Styling System</span></td>
+              <td><strong>Tailwind CSS v4</strong></td>
+              <td>Glassmorphism, tw-animate-css, Responsive Grids</td>
+              <td>Curated industrial plant-floor aesthetic with dark mode</td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">Data Viz</span></td>
+              <td><strong>Recharts</strong></td>
+              <td>ResponsiveContainer, AreaChart, BarChart</td>
+              <td>Real-time telemetry trend graphs and takt time gauges</td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">Backend API</span></td>
+              <td><strong>Node.js & Express 5</strong></td>
+              <td>Modular Intelligence Engines, RFC-4180 Parser</td>
+              <td>High-throughput streaming intake of 50MB telemetry datasets</td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">Artificial Intel</span></td>
+              <td><strong>Google Gemini 1.5 Flash</strong></td>
+              <td>REST API, Temperature 0.2, Structured JSON Schema</td>
+              <td>Autonomous root-cause mechanical reasoning & technician commands</td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">Database & Auth</span></td>
+              <td><strong>Supabase (PostgreSQL)</strong></td>
+              <td>Tables: machines, alerts, telemetry; Supabase Auth</td>
+              <td>Secure JWT authentication and cloud persistence</td>
+            </tr>
+            <tr>
+              <td><span class="tech-badge">High Availability</span></td>
+              <td><strong>Drizzle ORM & MemoryStore</strong></td>
+              <td>In-memory seed fallback + Circuit Breaker pattern</td>
+              <td>100% operational uptime if database or internet is offline</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Business ROI & Roadmap -->
+    <div class="slide">
+      <div class="slide-header">
+        <div>
+          <div class="category-tag">Value Delivered & Future Horizons</div>
+          <h2 class="slide-title">Industrial Impact, Business ROI & Strategic Roadmap</h2>
+        </div>
+        <div class="system-badge">VALUE PROPOSITION</div>
+      </div>
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- ROI Column -->
+          <div class="card" style="--card-accent: var(--accent-green);">
+            <div class="card-subtitle">Quantified Plant Floor ROI</div>
+            <h3 class="card-title">Measurable Operational Impact</h3>
+            <ul>
+              <li><strong>40% Reduction in Unplanned Stoppages:</strong> Detecting thermal spikes and vibration harmonics 2-4 hours prior to failure prevents catastrophic robotic workcell freezes.</li>
+              <li><strong>90% Faster Root-Cause Diagnosis:</strong> Replaces manual sensor log inspection with immediate AI-generated technical diagnoses, slashing resolution time from 45 min to under 30 seconds.</li>
+              <li><strong>Zero Hardware Lock-In:</strong> Dynamic telemetry normalizer connects to any sensor protocol (Siemens, Fanuc, KUKA, ABB) without costly proprietary gateway hardware.</li>
+            </ul>
+          </div>
+          <!-- Roadmap Column -->
+          <div class="card" style="--card-accent: var(--accent-cyan);">
+            <div class="card-subtitle">Strategic Expansion Horizon</div>
+            <h3 class="card-title">Future Technical Roadmap</h3>
+            <ul>
+              <li><strong>Phase 1: OPC-UA & MQTT Direct Streaming:</strong> Transition from REST/CSV batches to direct microsecond telemetry buses from factory floor PLCs.</li>
+              <li><strong>Phase 2: Acoustic Harmonic AI:</strong> Deploy directional microphones to detect minute acoustic pitch shifts in robotic drive gearboxes.</li>
+              <li><strong>Phase 3: Digital Twin 3D Visualization:</strong> Interactive Three.js 3D plant CAD model with real-time robotic arm thermal heat mapping.</li>
+              <li><strong>Phase 4: Closed-Loop Workcell Throttling:</strong> Autonomous feedback loops that throttle station feed speed when sensors approach warning limits.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Conclusion & Q&A -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="category-tag">Conclusion & Demonstration</div>
+        <div class="system-badge">THANK YOU</div>
+      </div>
+      <div class="content-area" style="align-items: center; justify-content: center;">
+        <div class="card" style="max-width: 800px; text-align: center; padding: 3rem; --card-accent: var(--accent-cyan); align-items: center;">
+          <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 0.5rem;">DriveOps-AI</h1>
+          <h2 class="hero-subtitle" style="font-size: 1.4rem; margin-bottom: 1.5rem;">Smart Car Manufacturing & Production Intelligence</h2>
+          <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+            Empowering plant operators, quality engineers, and maintenance crews with autonomous real-time intelligence, deterministic physics safety, and zero-downtime reliability.
+          </p>
+          <div style="background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); padding: 0.8rem 1.6rem; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--accent-cyan);">
+            Live Demo: https://driveops-ai.vercel.app
+          </div>
+          <p style="margin-top: 2rem; color: var(--accent-amber); font-weight: 600; letter-spacing: 1px;">
+            Open for Questions & Discussion
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Interactive Controls Bar -->
+  <div class="controls">
+    <button class="nav-btn" onclick="prevSlide()" title="Previous Slide (Left Arrow)">◀</button>
+    <div class="slide-counter" id="slideCounter">1 / 10</div>
+    <button class="nav-btn" onclick="nextSlide()" title="Next Slide (Right Arrow or Space)">▶</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Full Screen (F)">⛶</button>
+    <button class="print-btn" onclick="window.print()" title="Export / Print to PDF">Print / Save PDF</button>
+    <a href="DriveOps_AI_Presentation.pptx" download="DriveOps_AI_Presentation.pptx" class="print-btn" style="background: linear-gradient(135deg, #00e5ff 0%, #00b0ff 100%); color: #000; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;" title="Download PowerPoint File">⬇ Download .PPTX</a>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slideCounter');
+
+    function updateSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+      counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 import { dbClient } from '../database/db';
 import type { AlertRecord, Severity } from '../models/types';
+import { telegramService } from './telegramService';
 
 export const alertService = {
   /**
@@ -47,6 +48,8 @@ export const alertService = {
     };
 
     await dbClient.saveAlert(alert);
+    // Dispatch alert to Telegram
+    telegramService.sendAlert(alert).catch(() => {});
     return alert;
   },
 

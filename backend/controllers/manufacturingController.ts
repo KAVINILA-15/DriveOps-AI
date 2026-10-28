@@ -5,6 +5,7 @@ import { memoryStore } from '../database/memoryStore';
 import { extractCsvFromRequest } from '../utils/multipartHelper';
 import { logger } from '../utils/logger';
 import type { ProcessedDataset } from '../models/types';
+import { telegramService } from '../services/telegramService';
 
 export const manufacturingController = {
   /**
@@ -111,6 +112,11 @@ export const manufacturingController = {
       // Persist the dataset in the state store & update all fleet, alerts, and dashboard metrics
       memoryStore.saveDataset(processedDataset);
 
+      // Forward alerts directly to Telegram chatbot
+      telegramService.sendDatasetUploadAlerts(fileName || 'uploaded_telemetry.csv', anomalies, summary).catch((err) => {
+        logger.warn(`[DriveOps-AI] Telegram alert dispatch failed: ${err?.message}`);
+      });
+
       logger.info(
         `[DriveOps-AI] Processed dataset "${fileName}": ${totalRecords} records, ${anomalies.length} anomalies, hash: ${fileHash.substring(0, 8)}`
       );
@@ -208,17 +214,21 @@ export const manufacturingController = {
         },
         alerts: evalResult.is_anomaly
           ? [
-              {
-                alert_id: `ALT-${evalResult.machine_id}-${Date.now().toString(36).toUpperCase()}`,
-                machine_id: evalResult.machine_id,
-                production_line: evalResult.production_line,
-                timestamp: 'Just now',
-                alert_type: evalResult.reasons[0] || `${evalResult.machine_id} Anomaly`,
-                severity: evalResult.severity,
-                message: evalResult.explanation,
-                recommended_action: evalResult.recommended_action,
-                status: 'open',
-              },
+              (() => {
+                const alt = {
+                  alert_id: `ALT-${evalResult.machine_id}-${Date.now().toString(36).toUpperCase()}`,
+                  machine_id: evalResult.machine_id,
+                  production_line: evalResult.production_line,
+                  timestamp: 'Just now',
+                  alert_type: evalResult.reasons[0] || `${evalResult.machine_id} Anomaly`,
+                  severity: evalResult.severity,
+                  message: evalResult.explanation,
+                  recommended_action: evalResult.recommended_action,
+                  status: 'open' as const,
+                };
+                telegramService.sendAlert(alt).catch(() => {});
+                return alt;
+              })(),
             ]
           : [],
         recommendations: evalResult.is_anomaly ? [evalResult.recommended_action] : [],

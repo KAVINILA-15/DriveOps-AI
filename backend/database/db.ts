@@ -105,6 +105,12 @@ export const dbClient = {
   async saveAlert(alert: AlertRecord): Promise<void> {
     memoryStore.addAlert(alert);
 
+    // Forward alert to Telegram chatbot
+    try {
+      const { telegramService } = await import('../services/telegramService');
+      telegramService.sendAlert(alert).catch(() => {});
+    } catch {}
+
     if (config.supabaseUrl && config.supabaseKey && !config.supabaseUrl.includes('placeholder')) {
       try {
         const url = `${config.supabaseUrl.replace(/\/$/, '')}/rest/v1/alerts`;

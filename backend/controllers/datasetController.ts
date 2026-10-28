@@ -5,6 +5,7 @@ import { extractCsvFromRequest } from '../utils/multipartHelper';
 import { evaluateRecordDeterministic } from '../analysis/anomalyDetector';
 import type { ProcessedDataset } from '../models/types';
 import { logger } from '../utils/logger';
+import { telegramService } from '../services/telegramService';
 
 export const datasetController = {
   /**
@@ -133,6 +134,11 @@ export const datasetController = {
 
       // Persist the dataset in state store & disk
       memoryStore.saveDataset(processedDataset);
+
+      // Asynchronously dispatch dataset anomalies to Telegram chatbot
+      telegramService.sendDatasetUploadAlerts(fileName || 'uploaded_telemetry.csv', anomalies, summary).catch((err) => {
+        logger.warn(`[Datasets] Telegram alert dispatch failed: ${err?.message}`);
+      });
 
       const datasetRecord = memoryStore.getDatasetById(datasetId);
       const analysisRun = memoryStore.getAnalysisRun(datasetId);

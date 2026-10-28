@@ -66,4 +66,39 @@ export const alertController = {
       return res.status(500).json({ error: 'Failed to acknowledge alert', message: err?.message });
     }
   },
+
+  /**
+   * Dispatch alerts to Telegram chatbot from backend
+   * POST /api/alerts/telegram
+   */
+  async dispatchTelegram(req: Request, res: Response) {
+    try {
+      const { fileName, anomalies, summary, alert, message } = req.body;
+      const { telegramService } = await import('../services/telegramService');
+
+      if (anomalies && Array.isArray(anomalies)) {
+        await telegramService.sendDatasetUploadAlerts(
+          fileName || 'manufacturing_telemetry.csv',
+          anomalies,
+          summary
+        );
+        return res.status(200).json({ success: true, message: 'Dataset alerts dispatched to Telegram' });
+      }
+
+      if (alert) {
+        await telegramService.sendAlert(alert);
+        return res.status(200).json({ success: true, message: 'Alert dispatched to Telegram' });
+      }
+
+      if (message) {
+        await telegramService.sendMessage(message);
+        return res.status(200).json({ success: true, message: 'Message dispatched to Telegram' });
+      }
+
+      return res.status(400).json({ error: 'Missing anomalies, alert, or message payload' });
+    } catch (err: any) {
+      logger.error('Failed to dispatch telegram notification:', err);
+      return res.status(500).json({ error: 'Failed to dispatch telegram notification', message: err?.message });
+    }
+  },
 };
