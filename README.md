@@ -2,7 +2,7 @@
 
 AI-powered manufacturing command center that ingests machine telemetry, analyzes operating parameters through a dedicated intelligence engine, and delivers real-time plant alerts.
 
-**Live demo:** [https://driveops-ai.vercel.app](https://drive-ops-ai-driveops-ai-iw9i.vercel.app/)
+**Live demo:** [[https://driveops-ai.vercel.app](https://drive-ops-ai-driveops-ai-iw9i.vercel.app/)](https://driveops-ai-three.vercel.app/)
 
 ---
 
